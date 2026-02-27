@@ -32,24 +32,32 @@ const NotesSummarizer = () => {
 
         // Mock API Call
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const response = await fetch("/api/summarize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ notes, length }),
+    });
+    
 
-            let mockSummary = '';
-            if (length === 'short') {
-                mockSummary = "This is a concise, high-level summary of your notes, capturing only the most essential points for a quick overview.";
-            } else if (length === 'long') {
-                mockSummary = "This is a detailed and comprehensive summary of your notes. It dives into secondary details, explains core concepts thoroughly, and ensures that no significant nuance is lost from the original text while still being organized and readable.";
-            } else {
-                mockSummary = "This is a balanced summary of your notes. It provides a clear structure, highlighting the main objectives and supporting evidence without being too brief or overly verbose.";
-            }
+    if (!response.ok) {
+      throw new Error("API not available");
+    }
 
-            setSummary(mockSummary);
-        } catch (err) {
-            setError('Something went wrong. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const data = await response.json();
+    setSummary(data.summary);
+
+  } catch (err) {
+    console.log("AI not available locally. Showing mock summary.");
+
+    setSummary(
+      "AI summarization is only available in production. This is a local development placeholder summary."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
     const copyToClipboard = () => {
         if (!summary) return;
