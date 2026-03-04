@@ -7,6 +7,7 @@ import DashboardPreview from './components/DashboardPreview';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
 import NotesSummarizer from './pages/NotesSummarizer';
+import Flashcards from './pages/Flashcards';
 
 function LandingPage() {
   return (
@@ -62,6 +63,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/summarizer" element={<NotesSummarizer />} />
+          <Route path="/flashcards" element={<Flashcards />} />
         </Routes>
         <Footer />
       </div>
