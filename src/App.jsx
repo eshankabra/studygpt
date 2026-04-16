@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ToolTabs from './components/ToolTabs';
 import FeatureGrid from './components/FeatureGrid';
-import DashboardPreview from './components/DashboardPreview';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
 import NotesSummarizer from './pages/NotesSummarizer';
@@ -34,7 +34,6 @@ function LandingPage() {
         <FeatureGrid />
       </section>
 
-      <DashboardPreview />
 
       {/* Call to Action Section */}
       <section className="py-20 px-6">
@@ -55,9 +54,20 @@ function LandingPage() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-navy-900 selection:bg-blue-500/30 selection:text-blue-200">
         <Navbar />
         <Routes>

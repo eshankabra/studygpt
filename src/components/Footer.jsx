@@ -19,8 +19,6 @@ const Footer = () => {
                 <div>
                     <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Product</h4>
                     <ul className="space-y-4 text-slate-400 text-sm">
-                        <li className="hover:text-blue-400 cursor-pointer transition-colors">AI Planner</li>
-                        <li className="hover:text-blue-400 cursor-pointer transition-colors">Exam Predictor</li>
                         <li className="hover:text-blue-400 cursor-pointer transition-colors">Flashcards</li>
                     </ul>
                 </div>

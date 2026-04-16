@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Loader2, Plus, AlertCircle } from 'lucide-react';
+import { Sparkles, Loader2, Plus, AlertCircle, Upload, FileText } from 'lucide-react';
 
 const FlashcardGenerator = ({ onGenerate }) => {
     const [notes, setNotes] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [fileName, setFileName] = useState('');
+    const fileInputRef = useRef(null);
+
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFileName(file.name);
+            setNotes(prev => prev + (prev.trim() ? '\n\n' : '') + `[Content extracted from ${file.name}]`);
+            // Reset input so the same file can be uploaded again if needed
+            e.target.value = null;
+        }
+    };
 
     const handleGenerate = async () => {
         if (!notes.trim()) {
@@ -20,28 +32,14 @@ const FlashcardGenerator = ({ onGenerate }) => {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Mock AI Generation Logic
-        const lines = notes.split('\n').filter(line => line.trim().length > 10);
-        let mockCards = [];
-
-        if (lines.length > 0) {
-            mockCards = lines.slice(0, 5).map((line, index) => {
-                // very basic split to pretend it's a Q&A
-                const words = line.split(' ');
-                const splitIndex = Math.floor(words.length / 3);
-                return {
-                    id: Date.now() + index,
-                    front: words.slice(0, splitIndex).join(' ') + '?',
-                    back: words.slice(splitIndex).join(' '),
-                    status: 'new'
-                };
-            });
-        } else {
-            // Fallback mock cards if text is too short or weird
-            mockCards = [
-                { id: 1, front: "What is the primary function of Mitochondria?", back: "The Mitochondria is known as the powerhouse of the cell, primarily responsible for generating ATP.", status: 'new' },
-                { id: 2, front: "Define Photosynthesis.", back: "The process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water.", status: 'new' }
-            ];
-        }
+        // Output high-quality demo flashcards regardless of input to ensure the UI demo looks good
+        const mockCards = [
+            { id: Date.now() + 1, front: "What is the primary function of Mitochondria?", back: "The Mitochondria is known as the powerhouse of the cell, primarily responsible for generating ATP through cellular respiration.", status: 'new' },
+            { id: Date.now() + 2, front: "Define Photosynthesis.", back: "The process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water.", status: 'new' },
+            { id: Date.now() + 3, front: "What is Newton's First Law of Motion?", back: "An object will remain at rest or in uniform motion in a straight line unless acted upon by an external force (Law of Inertia).", status: 'new' },
+            { id: Date.now() + 4, front: "Explain the concept of Supply and Demand.", back: "An economic model that determines the price of a good: if supply is low and demand is high, the price goes up, and vice versa.", status: 'new' },
+            { id: Date.now() + 5, front: "In Computer Science, what does API stand for?", back: "Application Programming Interface - a set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service.", status: 'new' }
+        ];
 
         onGenerate(mockCards);
         setIsLoading(false);
@@ -51,7 +49,32 @@ const FlashcardGenerator = ({ onGenerate }) => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-slate-400 uppercase tracking-wider ml-1">Generate from Notes</label>
+                <div className="flex justify-between items-center ml-1">
+                    <label className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Generate from Notes</label>
+                    <div className="flex items-center gap-2">
+                        <button 
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="bg-white/5 hover:bg-white/10 text-slate-300 text-xs py-1.5 px-3 rounded-lg flex items-center gap-2 transition-colors border border-white/10"
+                        >
+                            <Upload size={14} />
+                            Upload PDF/PPT
+                        </button>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            onChange={handleFileUpload}
+                            accept=".pdf,.ppt,.pptx"
+                            className="hidden" 
+                        />
+                    </div>
+                </div>
+                {fileName && (
+                    <div className="text-xs text-emerald-400 ml-1 flex items-center gap-1">
+                        <FileText size={14} />
+                        Attached: {fileName}
+                    </div>
+                )}
                 <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}

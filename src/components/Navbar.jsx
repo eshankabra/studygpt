@@ -54,12 +54,9 @@ const Navbar = () => {
                                 >
                                     <div className="grid grid-cols-1 gap-1">
                                         {[
-                                            { name: 'AI Planner', path: '/' },
-                                            { name: 'AI Timetable', path: '/' },
                                             { name: 'AI Task Manager', path: '/' },
                                             { name: 'AI Notes Summarizer', path: '/summarizer' },
                                             { name: 'AI Flashcards', path: '/' },
-                                            { name: 'AI Exam Predictor', path: '/' },
                                         ].map((item) => (
                                             <Link
                                                 key={item.name}
