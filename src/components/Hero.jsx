@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Star, Users, GraduationCap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
     return (
@@ -23,12 +24,9 @@ const Hero = () => {
                         Designed to help students plan smarter, study faster, and track progress using cutting-edge AI. Master your curriculum effortlessly.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <button className="primary-button px-8 py-4 rounded-xl text-white font-bold text-lg">
-                            Try Free Now
-                        </button>
-                        <button className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 px-8 py-4 rounded-xl text-white font-bold text-lg transition-all">
+                        <Link to="/signup" className="primary-button px-8 py-4 rounded-xl text-white font-bold text-lg text-center inline-block">
                             Get Started
-                        </button>
+                        </Link>
                     </div>
                 </motion.div>
 

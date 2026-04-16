@@ -85,8 +85,8 @@ const Navbar = () => {
                             className="bg-slate-800/30 border border-slate-700/30 rounded-full py-1.5 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-slate-800/80 transition-all w-36 focus:w-48 placeholder:text-slate-500"
                         />
                     </div>
-                    <button className="text-slate-300 hover:text-white font-medium text-sm transition-colors px-2">Log In</button>
-                    <button className="primary-button px-5 py-2 rounded-full text-white font-semibold text-sm">Try Free</button>
+                    <Link to="/login" className="text-slate-300 hover:text-white font-medium text-sm transition-colors px-2">Log In</Link>
+                    <Link to="/signup" className="primary-button px-5 py-2 rounded-full text-white font-semibold text-sm">Sign Up</Link>
                 </div>
 
                 {/* Mobile menu toggle */}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -8,6 +8,8 @@ import Footer from './components/Footer';
 import { motion } from 'framer-motion';
 import NotesSummarizer from './pages/NotesSummarizer';
 import Flashcards from './pages/Flashcards';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function LandingPage() {
   return (
@@ -44,9 +46,9 @@ function LandingPage() {
             Join 1.2M+ students who are already using StudyGPT to master their curriculum.
           </p>
           <div className="flex justify-center">
-            <button className="primary-button px-12 py-4 rounded-xl text-white font-bold text-lg">
+            <Link to="/signup" className="primary-button px-12 py-4 rounded-xl text-white font-bold text-lg inline-block">
               Create Your Account
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -74,6 +76,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/summarizer" element={<NotesSummarizer />} />
           <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
         <Footer />
       </div>
