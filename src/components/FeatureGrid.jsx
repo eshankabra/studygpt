@@ -10,7 +10,7 @@ const features = [
     { icon: FileText, title: 'AI Notes Summarizer', desc: 'Condense long lectures into quick, digestible key points.', color: 'text-rose-400', path: '/summarizer' },
     { icon: Layers, title: 'AI Flashcards', desc: 'Generate high-quality study cards instantly from your materials.', color: 'text-cyan-400', path: '/flashcards' },
 
-    { icon: MessageSquare, title: 'AI Chat Tutor', desc: 'Step-by-step solutions and explanations for any subject.', color: 'text-pink-400', path: '/' },
+    { icon: MessageSquare, title: 'AI Chat Tutor', desc: 'Step-by-step solutions and explanations for any subject.', color: 'text-pink-400', path: '/tutor' },
 ];
 
 const FeatureGrid = () => {

@@ -15,12 +15,6 @@ const subjects = [
     { id: 'biology', name: 'Biology', icon: User, color: 'text-rose-400' } // Using user icon as placeholder for bio
 ];
 
-const mockHistory = [
-    { id: 1, title: 'Newton\'s Laws of Motion', date: 'Today' },
-    { id: 2, title: 'Integration by Parts', date: 'Yesterday' },
-    { id: 3, title: 'React Hooks Intro', date: 'Previous 7 Days' }
-];
-
 const AITutor = () => {
     const [input, setInput] = useState('');
     const [activeSubject, setActiveSubject] = useState(subjects[0]);
@@ -28,6 +22,28 @@ const AITutor = () => {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
+
+    const [history, setHistory] = useState([
+        { id: 1, title: 'Newton\'s Laws of Motion', date: 'Today' },
+        { id: 2, title: 'Integration by Parts', date: 'Yesterday' },
+        { id: 3, title: 'React Hooks Intro', date: 'Previous 7 Days' }
+    ]);
+
+    const [chats, setChats] = useState({
+        1: [
+            { id: 101, role: 'user', content: 'Can you explain Newton\'s laws of motion?', timestamp: '10:00 AM' },
+            { id: 102, role: 'ai', content: 'Sure! Newton has three laws of motion:\n\n1. An object at rest stays at rest, and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.\n2. Force equals mass times acceleration (F = ma).\n3. For every action, there is an equal and opposite reaction.', timestamp: '10:01 AM' }
+        ],
+        2: [
+            { id: 201, role: 'user', content: 'How do I do integration by parts?', timestamp: '02:30 PM' },
+            { id: 202, role: 'ai', content: 'The formula for integration by parts is:\n∫ u dv = uv - ∫ v du\n\nThe idea is to choose "u" and "dv" from your integrand. A helpful rule of thumb for choosing "u" is LIATE:\n- Logarithmic\n- Inverse trigonometric\n- Algebraic\n- Trigonometric\n- Exponential', timestamp: '02:32 PM' }
+        ],
+        3: [
+            { id: 301, role: 'user', content: 'What are React Hooks?', timestamp: '09:15 AM' },
+            { id: 302, role: 'ai', content: 'React Hooks are functions that let you "hook into" React state and lifecycle features from function components.\n\nThe two most common hooks are:\n- useState: lets you add state to functional components.\n- useEffect: lets you perform side effects in functional components.', timestamp: '09:16 AM' }
+        ]
+    });
+    const [currentChatId, setCurrentChatId] = useState(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -40,14 +56,30 @@ const AITutor = () => {
     const handleSend = (text) => {
         if (!text.trim()) return;
         
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        let activeChatId = currentChatId;
+        
+        if (!activeChatId) {
+            activeChatId = Date.now();
+            setCurrentChatId(activeChatId);
+            setHistory(prev => [{
+                id: activeChatId,
+                title: text.length > 30 ? text.substring(0, 30) + '...' : text,
+                date: 'Today'
+            }, ...prev]);
+        }
+        
         const newUserMessage = {
             id: Date.now(),
             role: 'user',
             content: text,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            timestamp: timestamp
         };
         
-        setMessages(prev => [...prev, newUserMessage]);
+        const newMessages = [...messages, newUserMessage];
+        setMessages(newMessages);
+        setChats(prev => ({ ...prev, [activeChatId]: newMessages }));
         setInput('');
         setIsTyping(true);
 
@@ -59,7 +91,9 @@ const AITutor = () => {
                 content: `Here is a helpful explanation about "${text}". The key concept to understand is that it strongly relates to ${activeSubject.name} fundamentals. Let me break it down for you.`,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
-            setMessages(prev => [...prev, aiResponse]);
+            const finalMessages = [...newMessages, aiResponse];
+            setMessages(finalMessages);
+            setChats(prev => ({ ...prev, [activeChatId]: finalMessages }));
             setIsTyping(false);
         }, 1500);
     };
@@ -71,8 +105,29 @@ const AITutor = () => {
         }
     };
 
-    const clearChat = () => {
+    const startNewChat = () => {
         setMessages([]);
+        setCurrentChatId(null);
+    };
+
+    const deleteChat = () => {
+        if (currentChatId) {
+            setHistory(prev => prev.filter(chat => chat.id !== currentChatId));
+            setChats(prev => {
+                const newChats = { ...prev };
+                delete newChats[currentChatId];
+                return newChats;
+            });
+        }
+        setMessages([]);
+        setCurrentChatId(null);
+    };
+
+    const loadChat = (chatId) => {
+        setCurrentChatId(chatId);
+        if (chats[chatId]) {
+            setMessages(chats[chatId]);
+        }
     };
 
     return (
@@ -92,7 +147,7 @@ const AITutor = () => {
                 <div className="p-4 flex-1 overflow-y-auto no-scrollbar flex flex-col gap-6">
                     {/* New Chat Button */}
                     <button 
-                        onClick={clearChat}
+                        onClick={startNewChat}
                         className="w-full flex items-center gap-2 primary-button px-4 py-3 rounded-xl text-white font-bold transition-all shadow-lg shadow-blue-500/20"
                     >
                         <Plus size={20} />
@@ -103,8 +158,12 @@ const AITutor = () => {
                     <div>
                         <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">Recent Chats</h3>
                         <div className="space-y-1">
-                            {mockHistory.map(chat => (
-                                <button key={chat.id} className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-all truncate flex items-center gap-2">
+                            {history.map(chat => (
+                                <button 
+                                    key={chat.id} 
+                                    onClick={() => loadChat(chat.id)}
+                                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all truncate flex items-center gap-2 ${currentChatId === chat.id ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                >
                                     <MessageSquare size={14} className="shrink-0" />
                                     <span className="truncate">{chat.title}</span>
                                 </button>
@@ -195,9 +254,9 @@ const AITutor = () => {
                         </div>
 
                         <button 
-                            onClick={clearChat}
+                            onClick={deleteChat}
                             className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors border border-transparent hover:border-rose-500/20"
-                            title="Clear Chat"
+                            title="Delete Chat"
                         >
                             <Trash2 size={18} />
                         </button>
@@ -243,7 +302,7 @@ const AITutor = () => {
                                                 <span className="text-xs font-medium text-slate-400">{message.role === 'user' ? 'You' : 'AI Tutor'}</span>
                                                 <span className="text-[10px] text-slate-500">{message.timestamp}</span>
                                             </div>
-                                            <div className={`p-4 rounded-2xl text-sm leading-relaxed ${
+                                            <div className={`p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                                                 message.role === 'user' 
                                                 ? 'bg-blue-600 text-white rounded-tr-sm' 
                                                 : 'glass border border-white/5 text-slate-200 rounded-tl-sm'
