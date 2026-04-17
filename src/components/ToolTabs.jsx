@@ -12,7 +12,7 @@ const tools = [
     { icon: FileText, label: 'AI Notes Summarizer', id: 'notes', path: '/summarizer' },
     { icon: Layers, label: 'AI Flashcards', id: 'flashcards', path: '/flashcards' },
 
-    { icon: MessageSquare, label: 'AI Chat Tutor', id: 'tutor', path: '/' },
+    { icon: MessageSquare, label: 'AI Chat Tutor', id: 'tutor', path: '/tutor' },
 ];
 
 const ToolTabs = () => {

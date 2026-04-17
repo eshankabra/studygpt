@@ -56,7 +56,8 @@ const Navbar = () => {
                                         {[
                                             { name: 'AI Task Manager', path: '/' },
                                             { name: 'AI Notes Summarizer', path: '/summarizer' },
-                                            { name: 'AI Flashcards', path: '/' },
+                                            { name: 'AI Flashcards', path: '/flashcards' },
+                                            { name: 'AI Chat Tutor', path: '/tutor' },
                                         ].map((item) => (
                                             <Link
                                                 key={item.name}

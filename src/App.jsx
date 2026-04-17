@@ -10,6 +10,7 @@ import NotesSummarizer from './pages/NotesSummarizer';
 import Flashcards from './pages/Flashcards';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import AITutor from './pages/AITutor';
 
 function LandingPage() {
   return (
@@ -66,21 +67,31 @@ function ScrollToTop() {
   return null;
 }
 
+function AppContent() {
+  const location = useLocation();
+  const isTutorPage = location.pathname === '/tutor';
+
+  return (
+    <div className="min-h-screen bg-navy-900 selection:bg-blue-500/30 selection:text-blue-200">
+      {!isTutorPage && <Navbar />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/summarizer" element={<NotesSummarizer />} />
+        <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/tutor" element={<AITutor />} />
+      </Routes>
+      {!isTutorPage && <Footer />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen bg-navy-900 selection:bg-blue-500/30 selection:text-blue-200">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/summarizer" element={<NotesSummarizer />} />
-          <Route path="/flashcards" element={<Flashcards />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Routes>
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   );
 }
