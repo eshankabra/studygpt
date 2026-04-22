@@ -8,7 +8,7 @@ import {
 
 const tools = [
 
-    { icon: CheckCircle, label: 'AI Task Manager', id: 'tasks', path: '/' },
+    { icon: CheckCircle, label: 'AI Task Manager', id: 'tasks', path: '/task-manager' },
     { icon: FileText, label: 'AI Notes Summarizer', id: 'notes', path: '/summarizer' },
     { icon: Layers, label: 'AI Flashcards', id: 'flashcards', path: '/flashcards' },
 
@@ -83,12 +83,12 @@ const ToolTabs = () => {
                             whileHover={{ y: -2 }}
                             className={`
                 relative flex items-center gap-3 px-6 py-3 rounded-t-xl cursor-pointer whitespace-nowrap transition-all duration-300
-                ${location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards')
+                ${location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards' || tool.id === 'tasks')
                                     ? 'bg-blue-500/10 border-b-2 border-blue-500 text-white'
                                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}
               `}
                         >
-                            <tool.icon size={18} className={(location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards')) ? 'text-blue-400' : ''} />
+                            <tool.icon size={18} className={(location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards'|| tool.id === 'tasks')) ? 'text-blue-400' : ''} />
                             <span className="font-semibold">{tool.label}</span>
                             {tool.badge && (
                                 <span className="ml-1 bg-blue-500 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md text-white">
@@ -96,7 +96,7 @@ const ToolTabs = () => {
                                 </span>
                             )}
 
-                            {(location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards')) && (
+                            {(location.pathname === tool.path && (tool.id === 'notes' || tool.id === 'flashcards'|| tool.id === 'tasks')) && (
                                 <motion.div
                                     layoutId="activeGlow"
                                     className="absolute inset-0 bg-blue-500/5 blur-md -z-10"

@@ -28,22 +28,42 @@ const FlashcardGenerator = ({ onGenerate }) => {
         setError('');
         setIsLoading(true);
 
-        // Simulate AI Delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+        const response = await fetch("/api/flashcards", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ notes }),
+        });
 
-        // Mock AI Generation Logic
-        // Output high-quality demo flashcards regardless of input to ensure the UI demo looks good
-        const mockCards = [
-            { id: Date.now() + 1, front: "What is the primary function of Mitochondria?", back: "The Mitochondria is known as the powerhouse of the cell, primarily responsible for generating ATP through cellular respiration.", status: 'new' },
-            { id: Date.now() + 2, front: "Define Photosynthesis.", back: "The process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water.", status: 'new' },
-            { id: Date.now() + 3, front: "What is Newton's First Law of Motion?", back: "An object will remain at rest or in uniform motion in a straight line unless acted upon by an external force (Law of Inertia).", status: 'new' },
-            { id: Date.now() + 4, front: "Explain the concept of Supply and Demand.", back: "An economic model that determines the price of a good: if supply is low and demand is high, the price goes up, and vice versa.", status: 'new' },
-            { id: Date.now() + 5, front: "In Computer Science, what does API stand for?", back: "Application Programming Interface - a set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service.", status: 'new' }
-        ];
+        const data = await response.json();
 
-        onGenerate(mockCards);
-        setIsLoading(false);
+        if (!response.ok || !data.cards) {
+            throw new Error("Failed to generate cards");
+        }
+
+        const formattedCards = data.cards.map(card => ({
+            id: card.id,
+            front: card.question,
+            back: card.answer,
+            status: "new"
+        }));
+
+        onGenerate(formattedCards);
+
         setNotes('');
+
+    } catch (err) {
+        console.error("Flashcard error:", err);
+        setError("Failed to generate flashcards. Try again.");
+    } finally {
+        setIsLoading(false);
+    }
+
+
+        
+        
     };
 
     return (

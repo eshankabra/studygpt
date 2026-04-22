@@ -11,6 +11,7 @@ import Flashcards from './pages/Flashcards';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AITutor from './pages/AITutor';
+import AITaskManager from "./pages/AITaskManager";
 
 function LandingPage() {
   return (
@@ -81,6 +82,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/tutor" element={<AITutor />} />
+        <Route path="/task-manager" element={<AITaskManager />} />
       </Routes>
       {!isTutorPage && <Footer />}
     </div>

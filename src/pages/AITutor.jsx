@@ -53,7 +53,7 @@ const AITutor = () => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = (text) => {
+    const handleSend = async (text) => {
         if (!text.trim()) return;
         
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -84,18 +84,52 @@ const AITutor = () => {
         setIsTyping(true);
 
         // Simulate AI response
-        setTimeout(() => {
-            const aiResponse = {
-                id: Date.now() + 1,
-                role: 'ai',
-                content: `Here is a helpful explanation about "${text}". The key concept to understand is that it strongly relates to ${activeSubject.name} fundamentals. Let me break it down for you.`,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            const finalMessages = [...newMessages, aiResponse];
-            setMessages(finalMessages);
-            setChats(prev => ({ ...prev, [activeChatId]: finalMessages }));
-            setIsTyping(false);
-        }, 1500);
+        try {
+    const response = await fetch("/api/tutor", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            message: text,
+            subject: activeSubject.name
+        }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.reply) {
+        throw new Error("AI failed");
+    }
+
+    const aiResponse = {
+        id: Date.now() + 1,
+        role: 'ai',
+        content: data.reply,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    const finalMessages = [...newMessages, aiResponse];
+    setMessages(finalMessages);
+    setChats(prev => ({ ...prev, [activeChatId]: finalMessages }));
+
+} catch (err) {
+    console.error("Tutor error:", err);
+
+    const aiResponse = {
+        id: Date.now() + 1,
+        role: 'ai',
+        content: "⚠️ AI is currently unavailable. Please try again later.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    const finalMessages = [...newMessages, aiResponse];
+    setMessages(finalMessages);
+    setChats(prev => ({ ...prev, [activeChatId]: finalMessages }));
+
+} finally {
+    setIsTyping(false);
+}
     };
 
     const handleKeyDown = (e) => {
