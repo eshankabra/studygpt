@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Sparkles, ChevronLeft, Loader2 } from 'lucide-react';
+import { CheckCircle, Sparkles, ChevronLeft, Loader2, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ToolTabs from '../components/ToolTabs';
 
@@ -153,15 +153,24 @@ const AITaskManager = () => {
                         </p>
                       </div>
 
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        t.priority === "High"
-                          ? "bg-red-500/20 text-red-400"
-                          : t.priority === "Medium"
-                          ? "bg-yellow-500/20 text-yellow-400"
-                          : "bg-green-500/20 text-green-400"
-                      }`}>
-                        {t.priority}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                          t.priority === "High"
+                            ? "bg-red-500/20 text-red-400"
+                            : t.priority === "Medium"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-green-500/20 text-green-400"
+                        }`}>
+                          {t.priority}
+                        </span>
+                        <button
+                          onClick={() => setTasks(prev => prev.filter((_, index) => index !== i))}
+                          className="text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 p-1.5 rounded-lg transition-colors flex items-center justify-center"
+                          aria-label="Remove Task"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

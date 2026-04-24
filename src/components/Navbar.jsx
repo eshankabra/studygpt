@@ -54,7 +54,7 @@ const Navbar = () => {
                                 >
                                     <div className="grid grid-cols-1 gap-1">
                                         {[
-                                            { name: 'AI Task Manager', path: '/' },
+                                            { name: 'AI Task Manager', path: '/task-manager' },
                                             { name: 'AI Notes Summarizer', path: '/summarizer' },
                                             { name: 'AI Flashcards', path: '/flashcards' },
                                             { name: 'AI Chat Tutor', path: '/tutor' },

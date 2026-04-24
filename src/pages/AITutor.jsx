@@ -22,6 +22,8 @@ const AITutor = () => {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
+    const fileInputRef = useRef(null);
+    const [attachedFile, setAttachedFile] = useState(null);
 
     const [history, setHistory] = useState([
         { id: 1, title: 'Newton\'s Laws of Motion', date: 'Today' },
@@ -54,7 +56,7 @@ const AITutor = () => {
     }, [messages, isTyping]);
 
     const handleSend = async (text) => {
-        if (!text.trim()) return;
+        if (!text.trim() && !attachedFile) return;
         
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
@@ -63,17 +65,22 @@ const AITutor = () => {
         if (!activeChatId) {
             activeChatId = Date.now();
             setCurrentChatId(activeChatId);
+            const titleText = text.trim() ? text : attachedFile?.name;
             setHistory(prev => [{
                 id: activeChatId,
-                title: text.length > 30 ? text.substring(0, 30) + '...' : text,
+                title: titleText && titleText.length > 30 ? titleText.substring(0, 30) + '...' : (titleText || 'New Chat'),
                 date: 'Today'
             }, ...prev]);
         }
         
+        const contentStr = text.trim() || '';
+        const attachmentStr = attachedFile ? `[Attached File: ${attachedFile.name}]` : '';
+        const finalContent = [attachmentStr, contentStr].filter(Boolean).join('\n\n');
+
         const newUserMessage = {
             id: Date.now(),
             role: 'user',
-            content: text,
+            content: finalContent,
             timestamp: timestamp
         };
         
@@ -81,6 +88,8 @@ const AITutor = () => {
         setMessages(newMessages);
         setChats(prev => ({ ...prev, [activeChatId]: newMessages }));
         setInput('');
+        setAttachedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
         setIsTyping(true);
 
         // Simulate AI response
@@ -385,9 +394,48 @@ const AITutor = () => {
                 {/* Input Section */}
                 <div className="p-4 bg-navy-900 border-t border-white/5 relative z-20">
                     <div className="max-w-4xl mx-auto flex flex-col gap-3">
+                        <AnimatePresence>
+                            {attachedFile && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 10, height: 0 }}
+                                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                    exit={{ opacity: 0, scale: 0.95, height: 0 }}
+                                    className="flex items-center gap-3 bg-slate-800/80 p-3 rounded-xl border border-white/5 w-fit mb-1"
+                                >
+                                    <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                                        <Paperclip size={16} />
+                                    </div>
+                                    <span className="text-sm text-slate-300 max-w-[200px] truncate">
+                                        {attachedFile.name}
+                                    </span>
+                                    <button 
+                                        onClick={() => {
+                                            setAttachedFile(null);
+                                            if (fileInputRef.current) fileInputRef.current.value = '';
+                                        }}
+                                        className="text-slate-500 hover:text-rose-400 p-1 bg-white/5 rounded-md transition-colors"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         <div className="flex items-center bg-slate-800/50 border border-white/10 rounded-2xl pr-2 focus-within:border-blue-500/50 focus-within:bg-slate-800 transition-all shadow-inner">
                             <div className="pl-3 pr-2 flex items-center shrink-0">
-                                <button className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5" title="Attach File">
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    onChange={(e) => {
+                                        if (e.target.files[0]) setAttachedFile(e.target.files[0]);
+                                    }} 
+                                    className="hidden" 
+                                    accept="image/*,.pdf,.doc,.docx,.txt"
+                                />
+                                <button 
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5" 
+                                    title="Attach File"
+                                >
                                     <Paperclip size={18} />
                                 </button>
                             </div>
@@ -400,12 +448,10 @@ const AITutor = () => {
                                 className="w-full bg-transparent py-4 text-white focus:outline-none focus:ring-0 font-medium placeholder:text-slate-500"
                             />
                             <div className="pl-2 flex items-center gap-1 shrink-0">
-                                <button className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5" title="Voice Input">
-                                    <Mic size={18} />
-                                </button>
+
                                 <button 
                                     onClick={() => handleSend(input)}
-                                    disabled={!input.trim()}
+                                    disabled={!input.trim() && !attachedFile}
                                     className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors rounded-xl shadow-lg shadow-blue-500/20 disabled:shadow-none mr-1"
                                     title="Send Message"
                                 >

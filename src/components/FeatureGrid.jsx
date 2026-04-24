@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 const features = [
-    { icon: CheckCircle, title: 'AI Task Manager', desc: 'Organize and prioritize your daily assignments effortlessly.', color: 'text-emerald-400', path: '/' },
+    { icon: CheckCircle, title: 'AI Task Manager', desc: 'Organize and prioritize your daily assignments effortlessly.', color: 'text-emerald-400', path: '/task-manager' },
     { icon: FileText, title: 'AI Notes Summarizer', desc: 'Condense long lectures into quick, digestible key points.', color: 'text-rose-400', path: '/summarizer' },
     { icon: Layers, title: 'AI Flashcards', desc: 'Generate high-quality study cards instantly from your materials.', color: 'text-cyan-400', path: '/flashcards' },
 
