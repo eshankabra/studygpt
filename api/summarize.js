@@ -29,7 +29,8 @@ Be concise.
 Do NOT exceed the word limit.
 Use clear bullet points.
 Make sure the word limit is not more than three-fourth of the original message
-
+Do NOT use bold formatting (no **text**).
+You may use bullet points using - or *.
 Notes:
 ${notes}
 `;
